@@ -15,8 +15,39 @@ app.use((req, res, next) => {
   next();
 });
 
+// ============= CORS CONFIGURADO CORRECTAMENTE =============
+const corsOptions = {
+  origin: function (origin, callback) {
+    // Permitir peticiones sin origin (como Postman) y desde localhost
+    const allowedOrigins = [
+      'http://localhost:3000',
+      'http://localhost:3001',
+      'http://localhost:5173', // Vite
+      'https://impertula.com' // Agrega tu dominio de producción aquí
+    ];
+    
+    // Permitir peticiones sin origin (herramientas de desarrollo)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(null, true); // Para desarrollo, acepta todo. En producción, cambia esto
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  exposedHeaders: ['Content-Range', 'X-Content-Range'],
+  maxAge: 600 // Cache preflight por 10 minutos
+};
+
+app.use(cors(corsOptions));
+
+// Manejar explícitamente las peticiones OPTIONS (preflight)
+app.options('*', cors(corsOptions));
+
 // Middleware
-app.use(cors());
 app.use(express.json());
 
 // MongoDB Connection - Usar variables de entorno
@@ -196,4 +227,5 @@ app.get('/api/health', (req, res) => {
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en puerto ${PORT}`);
+  console.log(`CORS habilitado para desarrollo`);
 });
