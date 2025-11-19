@@ -23,7 +23,7 @@ const corsOptions = {
       'http://localhost:3000',
       'http://localhost:3001',
       'http://localhost:5173', // Vite
-      'https://impertula.com' // Agrega tu dominio de producción aquí
+      'https://tu-dominio-frontend.com' // Agrega tu dominio de producción aquí
     ];
     
     // Permitir peticiones sin origin (herramientas de desarrollo)
@@ -43,9 +43,6 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-
-// Manejar explícitamente las peticiones OPTIONS (preflight)
-app.options('*', cors(corsOptions));
 
 // Middleware
 app.use(express.json());
